@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  bot:
+    build: .
+    container_name: futures_bot
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+    command: ["python", "main.py"]
+
+  dashboard:
+    build: .
+    container_name: futures_dashboard
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    command: ["python", "dashboard/app.py"]

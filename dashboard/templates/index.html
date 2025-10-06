@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Trading Bot Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body{font-family: Arial; margin: 20px;}
+    .grid{display:grid; grid-template-columns: 1fr 400px; gap:20px;}
+    pre{background:#f4f4f4;padding:10px;border-radius:6px;}
+  </style>
+</head>
+<body>
+  <h2>Binance Futures Bot - Dashboard</h2>
+  <div class="grid">
+    <div>
+      <canvas id="profitChart" height="150"></canvas>
+      <h3>Open Positions</h3>
+      <pre id="positions">loading...</pre>
+    </div>
+    <div>
+      <h3>Recent Trades</h3>
+      <div id="trades">loading...</div>
+    </div>
+  </div>
+
+<script>
+async function loadData(){
+  const res = await fetch('/api/data');
+  const data = await res.json();
+  const ctx = document.getElementById('profitChart').getContext('2d');
+  const labels = data.timestamps.map(t => t ? new Date(t).toLocaleString() : '');
+  const profit = data.profit;
+  if(window._chart) window._chart.destroy();
+  window._chart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: labels,
+      datasets:[{ label:'Cumulative Realized PnL (USDT)', data: profit, fill:false }]
+    }
+  });
+  document.getElementById('positions').textContent = JSON.stringify(data.positions, null, 2);
+  const tradesDiv = document.getElementById('trades');
+  tradesDiv.innerHTML = '';
+  (data.trades || []).slice(-30).reverse().forEach(t=>{
+    const el = document.createElement('div');
+    el.textContent = `${t.closed_at || t.ts} | ${t.symbol || ''} | ${t.note || ''} | ${t.side || ''} | entry:${t.entry || ''} | exit:${t.exit || ''} | pnl:${t.realized_pnl || ''}`;
+    tradesDiv.appendChild(el);
+  })
+}
+
+setInterval(loadData, 3000);
+loadData();
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+api:
+  testnet: true
+pairs:
+  - BTCUSDT
+  - ETHUSDT
+  - BNBUSDT
+order:
+  qty: 0.001
+  leverage: 5
+  take_profit_pct: 0.8
+  stop_loss_pct: 0.5
+  trailing_enable: true
+  trailing_trigger_pct: 0.5
+  trailing_delta_pct: 0.3
+time_filter:
+  enabled: true
+  tz_offset_hours: 7
+  start_hour: 8
+  end_hour: 23
+time:
+  poll_sec: 30
+timeouts:
+  order_timeout_sec: 900
+logging:
+  trades_log: "./logs/trades.json"

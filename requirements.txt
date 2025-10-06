@@ -1,0 +1,7 @@
+python-binance==1.0.16
+PyYAML
+Flask
+requests
+pandas
+ta
+python-dotenv
